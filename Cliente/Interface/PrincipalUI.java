@@ -11,9 +11,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import Negocio.*;
+
 public class PrincipalUI extends JFrame {
 	
 	private String nome;
+	
 	private String listaClinteOn[] = {"Todos", "Teste"};
 	
 	private JButton btObterArquivos, btOn, btOff, btEnviar;
@@ -30,9 +33,13 @@ public class PrincipalUI extends JFrame {
 	
 	private JScrollPane scroll;
 	
+	Cliente c;
+	
 	public PrincipalUI() {
 		
 		super("Chat Plus");
+		
+		c = new Cliente();
 		
 		setLayout(null);
 		
@@ -145,6 +152,9 @@ public class PrincipalUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				btOn.setEnabled(false);
 				btOff.setEnabled(true);
+				
+				c.conexaoServidor(1, tfNome.getText());
+				//c.lClientes.listaClientes
 			}
 		});
 		
@@ -152,8 +162,14 @@ public class PrincipalUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				btOn.setEnabled(true);
 				btOff.setEnabled(false);
+				
+				c.conexaoServidor(0, tfNome.getText());
 			}
 		});
+	}
+	
+	public void atualizaComboBox(){
+		
 	}
 	
 	public static void main(String[] args) {
