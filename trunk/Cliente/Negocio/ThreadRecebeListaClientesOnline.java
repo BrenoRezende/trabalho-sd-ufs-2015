@@ -50,6 +50,7 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 
 				for (int i = 0; i < listaClientes.size(); i++) {
 					System.out.println(listaClientes.get(i).nome);
+					System.out.println(listaClientes.get(i).IP);
 				}
 			}
 
