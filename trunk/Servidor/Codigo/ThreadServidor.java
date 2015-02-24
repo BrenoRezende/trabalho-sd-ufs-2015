@@ -52,8 +52,9 @@ public class ThreadServidor extends Thread{
 			  } else if(opcao == 0){
 				  for (int i = 0; i < ListaCliente.listaClientes.size(); i++) {
 					  Cliente c = ListaCliente.listaClientes.get(i);
-					  if (c.nome == nomeCliente && c.IP.equals(ipCliente)){
+					  if (c.nome.equalsIgnoreCase(nomeCliente) && c.IP.equals(ipCliente)){
 						  ListaCliente.listaClientes.remove(i);
+						  System.out.println("Cliente desconectado: "+ nomeCliente);
 						  break;
 					  }
 				  }

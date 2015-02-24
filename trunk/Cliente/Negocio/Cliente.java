@@ -17,7 +17,8 @@ public class Cliente {
 	private String nome;
 	private String IPCliente;
 	private int PORTACliente = 6666;
-	private ThreadRecebeListaClientesOnline lClientes;
+	public ThreadRecebeListaClientesOnline lClientes;
+	public ThreadRecebeMensagensChat recebeMsg;
 	
 	public Cliente(){
 		try {
@@ -29,7 +30,8 @@ public class Cliente {
 		}
 		lClientes = new ThreadRecebeListaClientesOnline();
 		lClientes.start();
-		new ThreadRecebeMensagensChat().start();
+		recebeMsg = new ThreadRecebeMensagensChat();
+		recebeMsg.start();
 	}
 
 	public void conexaoServidor(int tipoConexao, String nomeCliente){
@@ -48,14 +50,11 @@ public class Cliente {
 
 			outToServer.writeBytes(tipoConexao+","+nomeCliente+","+IPCliente+","+PORTACliente+"\n");
 
-			String entrada = inFromServer.readLine();
+			String confirmacaoConexao = inFromServer.readLine();
 
-			System.out.println(entrada);
+			System.out.println(confirmacaoConexao);
 
 			clientSocket.close();
-
-			System.out.println("Pedido de conexao enviado");
-
 
 		}catch(Exception e){
 			System.out.println(e.getMessage());
