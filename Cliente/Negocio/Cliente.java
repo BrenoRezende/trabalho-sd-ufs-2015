@@ -2,6 +2,7 @@ package Negocio;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
@@ -21,6 +22,15 @@ public class Cliente {
 	public ThreadRecebeMensagensChat recebeMsg;
 	
 	public Cliente(){
+		
+		File f = new File("ClienteOnline.txt");
+		if (!f.exists()){
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		try {
 			//Pegando IP interno do cliente
 			InetAddress i = InetAddress.getLocalHost();
@@ -84,7 +94,7 @@ public class Cliente {
 		}
 	}
 	
-	public void chatEnviaMensagemTodos(String msg) throws IOException{
+	/*public void chatEnviaMensagemTodos(String msg) throws IOException{
 		try {
 
 			DatagramSocket socket = new DatagramSocket();
@@ -107,5 +117,5 @@ public class Cliente {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
