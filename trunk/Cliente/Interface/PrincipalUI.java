@@ -2,7 +2,16 @@ package Interface;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -11,13 +20,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import Codigo.ListaCliente;
 import Negocio.*;
 
 public class PrincipalUI extends JFrame {
 	
-	private String nome;
-	
-	private String listaClinteOn[] = {"Todos", "Teste"};
+	static Vector comboBoxItems = new Vector();
 	
 	private JButton btObterArquivos, btOn, btOff, btEnviar;
 	
@@ -39,7 +47,14 @@ public class PrincipalUI extends JFrame {
 		
 		super("Chat Plus");
 		
+		comboBoxItems.add("Todos");
 		c = new Cliente();
+		
+		try {
+			atualizaComboBox();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		setLayout(null);
 		
@@ -64,7 +79,8 @@ public class PrincipalUI extends JFrame {
 		lbClientesOn.setBounds(20, 80, 100, 30);
 		add(lbClientesOn);
 		
-		comboListaClienteOn = new JComboBox(listaClinteOn);
+		final DefaultComboBoxModel model = new DefaultComboBoxModel(comboBoxItems);
+		comboListaClienteOn = new JComboBox(model);
 		comboListaClienteOn.setBounds(120, 80, 500, 30);
 		add(comboListaClienteOn);
 		
@@ -166,10 +182,31 @@ public class PrincipalUI extends JFrame {
 				c.conexaoServidor(0, tfNome.getText());
 			}
 		});
+		
+		btEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btOn.setEnabled(true);
+				btOff.setEnabled(false);
+				
+				tfTextoEnviar.setText(comboListaClienteOn.getSelectedItem().toString());
+			}
+		});
 	}
 	
-	public void atualizaComboBox(){
-		
+	
+	public static void atualizaComboBox() throws IOException{
+		File f = new File("ClienteOnline.txt");
+		if (!f.exists()){
+			f.createNewFile();
+		}
+		FileReader fr = new FileReader(f);
+		BufferedReader br = new BufferedReader(fr);
+
+		int i = 0;
+		while(br.ready()){
+			String[]linha = br.readLine().split(",");
+			comboBoxItems.add(linha[0]);
+		}
 	}
 	
 	public static void main(String[] args) {

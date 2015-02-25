@@ -1,10 +1,15 @@
 package Negocio;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.ArrayList;
+
+import Interface.PrincipalUI;
 
 public class ThreadRecebeListaClientesOnline extends Thread{
 
@@ -22,6 +27,12 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 			MulticastSocket socket = new MulticastSocket(8888);
 			InetAddress address = InetAddress.getByName("224.2.2.3");
 			socket.joinGroup(address);
+			
+			File f = new File("ClienteOnline.txt");
+			if (!f.exists()){
+				f.createNewFile();
+			}
+			
 
 			while(true){
 				DatagramPacket inPacket = new DatagramPacket(inBuf, inBuf.length);
@@ -35,6 +46,10 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 				String msg = new String(inBuf, 0, inPacket.getLength());
 				String [] entrada = msg.split(";");
 
+				
+				FileWriter fw = new FileWriter(f);
+				BufferedWriter bw = new BufferedWriter(fw);
+				
 				for (int i = 0; i < entrada.length; i++) {
 					String dados = entrada[i];
 					String [] linha = dados.split(",");
@@ -46,7 +61,17 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 
 					//Adiciona clientes a lista
 					listaClientes.add(c);
+					
+					//Grava clientes no arquivo
+					bw.write(dados);
+					bw.newLine();
 				}
+				
+				bw.close();
+				fw.close();
+				
+				//Atualiza clientes online no ComboBox
+				PrincipalUI.atualizaComboBox();
 
 				for (int i = 0; i < listaClientes.size(); i++) {
 					System.out.println(listaClientes.get(i).nome);
