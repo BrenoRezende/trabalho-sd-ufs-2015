@@ -189,14 +189,9 @@ public class PrincipalUI extends JFrame {
 				String msg = tfTextoEnviar.getText();
 
 				if (msg.equalsIgnoreCase("Todos")) {
-					try {
-						c.chatEnviaMensagemTodos(msg);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+
 				}else{
 					String cliente = comboListaClienteOn.getSelectedItem().toString();
-					int posicaoCliente = c.lClientes.listaClientes.indexOf(cliente);
 					
 					File f = new File("ClienteOnline.txt");
 					FileReader fr;
@@ -237,9 +232,6 @@ public class PrincipalUI extends JFrame {
 
 	public static void atualizaComboBox() throws IOException{
 		File f = new File("ClienteOnline.txt");
-		if (!f.exists()){
-			f.createNewFile();
-		}
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
 

@@ -13,12 +13,6 @@ import Interface.PrincipalUI;
 
 public class ThreadRecebeListaClientesOnline extends Thread{
 
-	public ArrayList<TipoCliente> listaClientes;
-
-	public ThreadRecebeListaClientesOnline() {
-		listaClientes = new ArrayList<TipoCliente>();
-	}
-
 	@Override
 	public void run(){
 		byte[] inBuf = new byte[1024];    
@@ -38,9 +32,6 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 				DatagramPacket inPacket = new DatagramPacket(inBuf, inBuf.length);
 				socket.receive(inPacket);
 
-				//Como chegou uma nova lista de clientes, então a anterior é excluida
-				listaClientes.clear();
-
 				
 				//Recebe lista de clientes no formato "nome,ip,porta;nome,ip,porta;..."
 				String msg = new String(inBuf, 0, inPacket.getLength());
@@ -54,14 +45,6 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 					String dados = entrada[i];
 					String [] linha = dados.split(",");
 					
-					TipoCliente c = new TipoCliente();
-					c.nome = linha[0];
-					c.IP = linha[1];
-					c.PORTA = Integer.parseInt(linha[2]);
-
-					//Adiciona clientes a lista
-					listaClientes.add(c);
-					
 					//Grava clientes no arquivo
 					bw.write(dados);
 					bw.newLine();
@@ -73,10 +56,6 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 				//Atualiza clientes online no ComboBox
 				PrincipalUI.atualizaComboBox();
 
-				for (int i = 0; i < listaClientes.size(); i++) {
-					System.out.println(listaClientes.get(i).nome);
-					System.out.println(listaClientes.get(i).IP);
-				}
 			}
 
 		} catch (IOException ioe) {
