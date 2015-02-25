@@ -53,7 +53,7 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 				for (int i = 0; i < entrada.length; i++) {
 					String dados = entrada[i];
 					String [] linha = dados.split(",");
-
+					
 					TipoCliente c = new TipoCliente();
 					c.nome = linha[0];
 					c.IP = linha[1];
