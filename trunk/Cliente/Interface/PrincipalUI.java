@@ -170,7 +170,6 @@ public class PrincipalUI extends JFrame {
 				btOff.setEnabled(true);
 
 				c.conexaoServidor(1, tfNome.getText());
-				//c.lClientes.listaClientes
 			}
 		});
 
@@ -243,6 +242,15 @@ public class PrincipalUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
+		File f = new File("ClienteOnline.txt");
+		if (!f.exists()){
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		new PrincipalUI();
 	}
 

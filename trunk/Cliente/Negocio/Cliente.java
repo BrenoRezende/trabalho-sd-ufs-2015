@@ -18,19 +18,12 @@ public class Cliente {
 	private String nome;
 	private String IPCliente;
 	private int PORTACliente = 6666;
-	public ThreadRecebeListaClientesOnline lClientes;
-	public ThreadRecebeMensagensChat recebeMsg;
 	
 	public Cliente(){
+			
+		new ThreadRecebeListaClientesOnline().start();
+		new ThreadRecebeMensagensChat().start();
 		
-		File f = new File("ClienteOnline.txt");
-		if (!f.exists()){
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		try {
 			//Pegando IP interno do cliente
 			InetAddress i = InetAddress.getLocalHost();
@@ -38,10 +31,7 @@ public class Cliente {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		lClientes = new ThreadRecebeListaClientesOnline();
-		lClientes.start();
-		recebeMsg = new ThreadRecebeMensagensChat();
-		recebeMsg.start();
+
 	}
 
 	public void conexaoServidor(int tipoConexao, String nomeCliente){
@@ -49,7 +39,7 @@ public class Cliente {
 
 			this.nome = nomeCliente;
 			//Editar IP do servidor
-			Socket clientSocket = new Socket("127.0.0.1", 6789);
+			Socket clientSocket = new Socket("10.11.153.152", 6789);
 
 			DataOutputStream outToServer =
 					new DataOutputStream(clientSocket.getOutputStream()); 
