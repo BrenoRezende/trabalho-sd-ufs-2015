@@ -40,11 +40,11 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 				
 				FileWriter fw = new FileWriter(f);
 				BufferedWriter bw = new BufferedWriter(fw);
-				
+				System.out.println("Gravando arquivo.");
 				for (int i = 0; i < entrada.length; i++) {
 					String dados = entrada[i];
 					String [] linha = dados.split(",");
-					
+					System.out.println("Gravou: "+dados);
 					//Grava clientes no arquivo
 					bw.write(dados);
 					bw.newLine();
