@@ -23,10 +23,10 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 			socket.joinGroup(address);
 			
 			File f = new File("ClienteOnline.txt");
-			if (!f.exists()){
-				f.createNewFile();
+			if (f.exists()){
+				f.delete();
 			}
-			
+			f.createNewFile();
 
 			while(true){
 				DatagramPacket inPacket = new DatagramPacket(inBuf, inBuf.length);
