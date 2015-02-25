@@ -24,70 +24,70 @@ import Codigo.ListaCliente;
 import Negocio.*;
 
 public class PrincipalUI extends JFrame {
-	
+
 	static Vector comboBoxItems = new Vector();
-	
+
 	private JButton btObterArquivos, btOn, btOff, btEnviar;
-	
+
 	private JTextField tfTextoEnviar, tfNome;
-	
+
 	private JLabel lbNome, lbClientesOn;
-	
+
 	private JTextArea taAreaMensagens;
-	
+
 	private JComboBox comboListaClienteOn;
-	
+
 	private JTextArea areaTexto;
-	
+
 	private JScrollPane scroll;
-	
+
 	Cliente c;
-	
+
 	public PrincipalUI() {
-		
+
 		super("Chat Plus");
-		
+
 		comboBoxItems.add("Todos");
 		c = new Cliente();
-		
+
 		try {
 			atualizaComboBox();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		setLayout(null);
-		
+
 		btOn = new JButton("ON");
 		btOn.setBounds(650, 20, 100, 30);
 		add(btOn);
-		
+
 		btOff = new JButton("OFF");
 		btOff.setBounds(770, 20, 100, 30);
 		btOff.setEnabled(false);
 		add(btOff);
-		
+
 		lbNome = new JLabel("Nome:");
 		lbNome.setBounds(20, 20, 100, 30);
 		add(lbNome);
-		
+
 		tfNome = new JTextField();
 		tfNome.setBounds(120, 20, 500, 30);
 		add(tfNome);
-		
+
 		lbClientesOn = new JLabel("Pessoas On:");
 		lbClientesOn.setBounds(20, 80, 100, 30);
 		add(lbClientesOn);
-		
+
 		final DefaultComboBoxModel model = new DefaultComboBoxModel(comboBoxItems);
 		comboListaClienteOn = new JComboBox(model);
 		comboListaClienteOn.setBounds(120, 80, 500, 30);
 		add(comboListaClienteOn);
-		
+
 		btObterArquivos = new JButton("Obter Arquivos");
 		btObterArquivos.setBounds(650, 80, 220, 30);
 		add(btObterArquivos);
-		
+
 		areaTexto = new JTextArea("", 0, 0);
 		areaTexto.setLineWrap(true); 
 		areaTexto.setEditable(false); 
@@ -95,25 +95,25 @@ public class PrincipalUI extends JFrame {
 		scroll = new JScrollPane(areaTexto);
 		scroll.setBounds(20, 140, 850, 300);
 		add(scroll);
-		
+
 		tfTextoEnviar = new JTextField();
 		tfTextoEnviar.setBounds(20, 470, 740, 30);
 		add(tfTextoEnviar);
-		
+
 		btEnviar = new JButton("Enviar");
 		btEnviar.setBounds(770, 470, 100, 30);
 		add(btEnviar);
-		
+
 		/*
 		tfPalavra = new JTextField("");
 		tfPalavra.setBounds(347, 425, 150, 30);
 		add(tfPalavra);
-		
+
 		btTestarPalavra = new JButton("Validar");
 		btTestarPalavra.setBounds(507, 425, 100, 30);
 		btTestarPalavra.setForeground(Color.black);
 		add(btTestarPalavra);
-		
+
 		lbTitulo = new JLabel("Simulador de Autômato Finito Não-Determinístico");
 		lbTitulo.setBounds(19, 8, 1000, 35);
 		lbTitulo.setFont(new java.awt.Font("Tahoma", 0, 20));
@@ -145,15 +145,15 @@ public class PrincipalUI extends JFrame {
 		tfEstadoIni = new JTextField("q0");
 		tfEstadoIni.setBounds(436, 82, 90, 30);
 		add(tfEstadoIni);
-		
+
 		lbAlfabeto = new JLabel("Letras do Alfabeto");
 		lbAlfabeto.setBounds(62, 115, 160, 35);
 		lbAlfabeto.setFont(new java.awt.Font("Tahoma", 0, 15));
 		lbAlfabeto.setForeground(Color.WHITE);
 		add(lbAlfabeto); */
-		
+
 		acoesBotoes();
-		
+
 		setSize(900, 555);
 		setResizable(false);
 		//setUndecorated(true);
@@ -161,39 +161,80 @@ public class PrincipalUI extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
-	
+
 	public void acoesBotoes() {
-		
+
 		btOn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btOn.setEnabled(false);
 				btOff.setEnabled(true);
-				
+
 				c.conexaoServidor(1, tfNome.getText());
 				//c.lClientes.listaClientes
 			}
 		});
-		
+
 		btOff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btOn.setEnabled(true);
 				btOff.setEnabled(false);
-				
+
 				c.conexaoServidor(0, tfNome.getText());
 			}
 		});
-		
+
 		btEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				btOn.setEnabled(true);
-				btOff.setEnabled(false);
 				
-				tfTextoEnviar.setText(comboListaClienteOn.getSelectedItem().toString());
+				String msg = tfTextoEnviar.getText();
+
+				if (msg.equalsIgnoreCase("Todos")) {
+					try {
+						c.chatEnviaMensagemTodos(msg);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}else{
+					String cliente = comboListaClienteOn.getSelectedItem().toString();
+					int posicaoCliente = c.lClientes.listaClientes.indexOf(cliente);
+					
+					File f = new File("ClienteOnline.txt");
+					FileReader fr;
+					try {
+						fr = new FileReader(f);
+						BufferedReader br = new BufferedReader(fr);
+						while(br.ready()){
+							String[]linha = br.readLine().split(",");
+							if(cliente.equalsIgnoreCase(linha[0])){
+								TipoCliente tc = new TipoCliente();
+								tc.nome = linha[0];
+								tc.IP = linha[1];
+								tc.PORTA = Integer.parseInt(linha[2]);
+								
+								try {
+									c.chatEnviaMensagemIndividual(tc, msg);
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								}
+								
+								break;
+							}
+						}
+						
+						
+					} catch (FileNotFoundException e2) {
+						e2.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
 			}
 		});
 	}
-	
-	
+
+
 	public static void atualizaComboBox() throws IOException{
 		File f = new File("ClienteOnline.txt");
 		if (!f.exists()){
@@ -202,13 +243,13 @@ public class PrincipalUI extends JFrame {
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
 
-		int i = 0;
 		while(br.ready()){
 			String[]linha = br.readLine().split(",");
 			comboBoxItems.add(linha[0]);
 		}
+
 	}
-	
+
 	public static void main(String[] args) {
 		new PrincipalUI();
 	}

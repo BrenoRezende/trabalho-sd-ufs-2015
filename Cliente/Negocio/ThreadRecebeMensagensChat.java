@@ -32,6 +32,7 @@ public class ThreadRecebeMensagensChat extends Thread {
 				String nomeClienteEnviou = entrada[0];
 				String mensagem = entrada[1];
 				
+				
 				System.out.println("Mensagem enviada por: "+nomeClienteEnviou);
 				System.out.println("Mensagem: "+mensagem);
 
