@@ -234,6 +234,8 @@ public class PrincipalUI extends JFrame {
 		FileReader fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
 
+		comboBoxItems.clear();
+		comboBoxItems.add("Todos");
 		while(br.ready()){
 			String[]linha = br.readLine().split(",");
 			comboBoxItems.add(linha[0]);
