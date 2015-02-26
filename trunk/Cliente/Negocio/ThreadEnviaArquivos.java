@@ -1,8 +1,11 @@
 package Negocio;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
@@ -21,19 +24,14 @@ public class ThreadEnviaArquivos extends Thread{
 
 	@Override
 	public void run(){
-		
+
 		ServerSocket welcomeSocket;
 		try {
 			welcomeSocket = new ServerSocket(5454);
 			while (true) {
-				
+
 				Socket connectionSocket = welcomeSocket.accept();
-				BufferedReader inFromClient = new BufferedReader(
-						new InputStreamReader(connectionSocket.getInputStream()));
-				
-				DataOutputStream outToClient = new DataOutputStream(
-						connectionSocket.getOutputStream());
-				// Aguarda nome do arquivo enviado pelo cliente.
+
 				try {
 					connectionSocket.setSoTimeout(60000);
 				} catch (Exception e) {
@@ -41,33 +39,42 @@ public class ThreadEnviaArquivos extends Thread{
 					e.printStackTrace();
 					return;
 				}
-				
-				
-				String dir = "C:\\arquivos"; 
 
-				File diretorio = new File(dir); 
-				File [] fList = diretorio.listFiles(); 
-				
-				for (int i = 0; i < fList.length; i++) {
-					byte [] arquivo = lerbytes(fList[i].getName()) ;
-					outToClient.write(arquivo);
-					System.out.println("Enviou arquivo");
+				String directory = "C:\\arquivos";
+
+				File[] files = new File(directory).listFiles();
+
+				BufferedOutputStream bos = new BufferedOutputStream(connectionSocket.getOutputStream());
+				DataOutputStream dos = new DataOutputStream(bos);
+
+				dos.writeInt(files.length);
+
+				for(File file : files)
+				{
+					long length = file.length();
+					dos.writeLong(length);
+
+					String name = file.getName();
+					dos.writeUTF(name);
+
+					FileInputStream fis = new FileInputStream(file);
+					BufferedInputStream bis = new BufferedInputStream(fis);
+
+					int theByte = 0;
+					while((theByte = bis.read()) != -1) bos.write(theByte);
+
+					bis.close();
 				}
-				
-				outToClient.close();
+
+				dos.close();
 
 			}
-			
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		
+
+
 	}
-	
-	public byte[] lerbytes(String nomeArq) throws IOException {
-		System.out.println("Lendo do diretorio");
-		Path path = Paths.get("C:\\arquivos\\", new String[] { nomeArq});
-		return Files.readAllBytes(path);
-	}
+
 }
