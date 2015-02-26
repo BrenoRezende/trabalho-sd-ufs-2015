@@ -2,6 +2,7 @@ package Negocio;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,7 +43,7 @@ public class Cliente {
 
 			this.nome = nomeCliente;
 			//Editar IP do servidor
-			Socket clientSocket = new Socket("192.168.1.105", 6789);
+			Socket clientSocket = new Socket("192.168.1.103", 6789);
 
 			DataOutputStream outToServer =
 					new DataOutputStream(clientSocket.getOutputStream()); 
@@ -98,7 +99,6 @@ public class Cliente {
 			outToServer.writeBytes("Ok" + '\n');
 
 			try{
-				System.out.println("Setando timeout do Cliente.");
 				clientSocket.setSoTimeout(60000);
 			}catch(Exception e){
 				clientSocket.close();
@@ -106,24 +106,25 @@ public class Cliente {
 				return;
 			}
 
-			BufferedInputStream inputS = new BufferedInputStream(clientSocket.getInputStream());
+			DataInputStream inputS = new DataInputStream(clientSocket.getInputStream());
 			byte[] buffer = new byte[1024];    //If you handle larger data use a bigger buffer size
 			int read;
 			
-			File f = new File("C:/arquivosBaixados/");
+			File f = new File("C:\\arquivosBaixados\\");
 			if (!f.exists())
 				f.mkdir();
 			
-			int i = 1;
 			
-			FileOutputStream fw = new FileOutputStream(f.toString()+"/Cliente_"+i);
-			System.out.println("Aguardando dados do arquivo");
+			FileOutputStream fw = new FileOutputStream(f.toString()+"/Cliente_"+clienteArquivo.nome+".txt");
 			while((read = inputS.read(buffer)) != -1) {
+				
 				fw.write(buffer, 0, read);
-				System.out.println("Recebendo do servidor: "+i);
+		
+				System.out.println("Recebendo do servidor: "+"/Cliente_"+clienteArquivo.nome+".txt");
+			
 			}
-			System.out.println("Arquivo Cliente_"+i+" salvo no diretório /arquivosBaixados/");
-			fw.close();			
+
+			fw.close();
 			clientSocket.close();
 
 		}catch(Exception ex){
