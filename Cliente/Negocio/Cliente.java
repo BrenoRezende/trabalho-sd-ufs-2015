@@ -1,6 +1,7 @@
 package Negocio;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -89,14 +90,10 @@ public class Cliente {
 	}
 
 	public void recebeArquivo(TipoCliente clienteArquivo){
-		
-	
+
+
 		try{
 			Socket clientSocket = new Socket(clienteArquivo.IP, 5454);
-			DataOutputStream outToServer =
-					new DataOutputStream(clientSocket.getOutputStream());
-
-			outToServer.writeBytes("Ok" + '\n');
 
 			try{
 				clientSocket.setSoTimeout(60000);
@@ -106,25 +103,31 @@ public class Cliente {
 				return;
 			}
 
-			DataInputStream inputS = new DataInputStream(clientSocket.getInputStream());
-			byte[] buffer = new byte[1024];    //If you handle larger data use a bigger buffer size
-			int read;
-			
-			File f = new File("C:\\arquivosBaixados\\");
-			if (!f.exists())
-				f.mkdir();
-			
-			
-			FileOutputStream fw = new FileOutputStream(f.toString()+"/Cliente_"+clienteArquivo.nome+".txt");
-			while((read = inputS.read(buffer)) != -1) {
-				
-				fw.write(buffer, 0, read);
-		
-				System.out.println("Recebendo do servidor: "+"/Cliente_"+clienteArquivo.nome+".txt");
-			
+			String dirPath = "C:\\arquivosBaixados\\";
+
+			BufferedInputStream bis = new BufferedInputStream(clientSocket.getInputStream());
+			DataInputStream dis = new DataInputStream(bis);
+
+			int filesCount = dis.readInt();
+			File[] files = new File[filesCount];
+
+			for(int i = 0; i < filesCount; i++)
+			{
+				long fileLength = dis.readLong();
+				String fileName = dis.readUTF();
+
+				files[i] = new File(dirPath + "/" + fileName);
+
+				FileOutputStream fos = new FileOutputStream(files[i]);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+				for(int j = 0; j < fileLength; j++) bos.write(bis.read());
+
+				bos.close();
 			}
 
-			fw.close();
+			dis.close();
+
 			clientSocket.close();
 
 		}catch(Exception ex){
