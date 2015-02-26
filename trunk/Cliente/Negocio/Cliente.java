@@ -23,6 +23,7 @@ public class Cliente {
 			
 		new ThreadRecebeListaClientesOnline().start();
 		new ThreadRecebeMensagensChat().start();
+		new ThreadEnviaArquivos().start();
 		
 		try {
 			//Pegando IP interno do cliente
@@ -39,7 +40,7 @@ public class Cliente {
 
 			this.nome = nomeCliente;
 			//Editar IP do servidor
-			Socket clientSocket = new Socket("10.11.153.152", 6789);
+			Socket clientSocket = new Socket("192.168.1.103", 6789);
 
 			DataOutputStream outToServer =
 					new DataOutputStream(clientSocket.getOutputStream()); 
@@ -83,29 +84,5 @@ public class Cliente {
 			e.printStackTrace();
 		}
 	}
-	
-	/*public void chatEnviaMensagemTodos(String msg) throws IOException{
-		try {
 
-			DatagramSocket socket = new DatagramSocket();
-			
-			String mensagem = this.nome +","+ msg +"\n";
-			
-			byte [] data = mensagem.getBytes() ;
-			
-			for (int i = 0; i < lClientes.listaClientes.size(); i++) {
-				TipoCliente tc = lClientes.listaClientes.get(i);
-				InetAddress address = InetAddress.getByName(tc.IP);
-				DatagramPacket packet = new DatagramPacket( data, data.length, address, tc.PORTA ) ;
-				
-				//Enviando mensagem
-				socket.send( packet ) ;
-			}
-
-			socket.close();
-
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-	}*/
 }

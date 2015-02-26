@@ -19,7 +19,7 @@ public class ThreadRecebeListaClientesOnline extends Thread{
 		try {
 			//Entrando no grupo multicast
 			MulticastSocket socket = new MulticastSocket(8888);
-			InetAddress address = InetAddress.getByName("224.2.2.3");
+			InetAddress address = InetAddress.getByName("239.0.0.123");
 			socket.joinGroup(address);
 			
 			File f = new File("ClienteOnline.txt");
