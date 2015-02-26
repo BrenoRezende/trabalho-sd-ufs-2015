@@ -213,7 +213,6 @@ public class PrincipalUI extends JFrame {
 					} catch (FileNotFoundException e2) {
 						e2.printStackTrace();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
@@ -233,7 +232,35 @@ public class PrincipalUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				String cliente = comboListaClienteOn.getSelectedItem().toString();
-				c.recebeArquivo(buscaCliente(cliente));
+
+				if (cliente.equalsIgnoreCase("Todos")) {
+					try {
+						File f = new File("ClienteOnline.txt");
+						FileReader fr = new FileReader(f);
+						BufferedReader br = new BufferedReader(fr);
+						while(br.ready()){
+							String[]linha = br.readLine().split(",");
+
+							TipoCliente tc = new TipoCliente();
+							tc.nome = linha[0];
+							tc.IP = linha[1];
+							tc.PORTA = Integer.parseInt(linha[2]);
+
+							c.recebeArquivo(tc);
+
+						}
+
+
+					} catch (FileNotFoundException e2) {
+						e2.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}else{
+					c.recebeArquivo(buscaCliente(cliente));
+				}
 			}
 		});
 	}
