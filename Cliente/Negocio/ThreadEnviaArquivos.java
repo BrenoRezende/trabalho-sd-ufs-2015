@@ -25,56 +25,59 @@ public class ThreadEnviaArquivos extends Thread{
 	@Override
 	public void run(){
 
-		ServerSocket welcomeSocket;
-		try {
-			welcomeSocket = new ServerSocket(5454);
-			while (true) {
+			ServerSocket welcomeSocket;
+			try {
+				welcomeSocket = new ServerSocket(5454);
+				while (true) {
 
-				Socket connectionSocket = welcomeSocket.accept();
+					Socket connectionSocket = welcomeSocket.accept();
+				
 
-				try {
-					connectionSocket.setSoTimeout(60000);
-				} catch (Exception e) {
-					connectionSocket.close();
-					e.printStackTrace();
-					return;
+					try {
+						connectionSocket.setSoTimeout(60000);
+					} catch (Exception e) {
+						connectionSocket.close();
+						e.printStackTrace();
+						return;
+					}
+
+					String directory = "C:\\arquivos";
+
+					File[] files = new File(directory).listFiles();
+
+					BufferedOutputStream bos = new BufferedOutputStream(connectionSocket.getOutputStream());
+					DataOutputStream dos = new DataOutputStream(bos);
+
+					dos.writeInt(files.length);
+
+					for(File file : files)
+					{
+						long length = file.length();
+						dos.writeLong(length);
+
+						String name = file.getName();
+						dos.writeUTF(name);
+
+						FileInputStream fis = new FileInputStream(file);
+						BufferedInputStream bis = new BufferedInputStream(fis);
+
+						int theByte = 0;
+						while((theByte = bis.read()) != -1){
+							bos.write(theByte);
+						}
+
+						bis.close();
+					}
+
+					dos.close();
+
 				}
 
-				String directory = "C:\\arquivos";
-
-				File[] files = new File(directory).listFiles();
-
-				BufferedOutputStream bos = new BufferedOutputStream(connectionSocket.getOutputStream());
-				DataOutputStream dos = new DataOutputStream(bos);
-
-				dos.writeInt(files.length);
-
-				for(File file : files)
-				{
-					long length = file.length();
-					dos.writeLong(length);
-
-					String name = file.getName();
-					dos.writeUTF(name);
-
-					FileInputStream fis = new FileInputStream(file);
-					BufferedInputStream bis = new BufferedInputStream(fis);
-
-					int theByte = 0;
-					while((theByte = bis.read()) != -1) bos.write(theByte);
-
-					bis.close();
-				}
-
-				dos.close();
-
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-
+	
 	}
 
 }

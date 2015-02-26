@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.UIManager.*;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,8 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
-import Codigo.ListaCliente;
 import Negocio.*;
 
 public class PrincipalUI extends JFrame {
@@ -46,6 +47,7 @@ public class PrincipalUI extends JFrame {
 		super("Chat Plus");
 
 		comboBoxItems.add("Todos");
+				
 		c = new Cliente();
 
 		try {
@@ -56,11 +58,11 @@ public class PrincipalUI extends JFrame {
 
 		setLayout(null);
 
-		btOn = new JButton("ON");
+		btOn = new JButton("Entrar");
 		btOn.setBounds(650, 20, 100, 30);
 		add(btOn);
 
-		btOff = new JButton("OFF");
+		btOff = new JButton("Sair");
 		btOff.setBounds(770, 20, 100, 30);
 		btOff.setEnabled(false);
 		add(btOff);
@@ -73,7 +75,7 @@ public class PrincipalUI extends JFrame {
 		tfNome.setBounds(120, 20, 500, 30);
 		add(tfNome);
 
-		lbClientesOn = new JLabel("Pessoas On:");
+		lbClientesOn = new JLabel("Pessoas Online:");
 		lbClientesOn.setBounds(20, 80, 100, 30);
 		add(lbClientesOn);
 
@@ -188,9 +190,13 @@ public class PrincipalUI extends JFrame {
 
 				String forWho = comboListaClienteOn.getSelectedItem().toString();
 				String msg = tfTextoEnviar.getText();
+				
+				tfTextoEnviar.setText("");
 
 				if (forWho.equalsIgnoreCase("Todos")) {
-
+					
+					areaTexto.setText(PrincipalUI.areaTexto.getText() + "Eu para Todos: "+msg+" \n");
+					
 					try {
 						fr = new FileReader(f);
 						BufferedReader br = new BufferedReader(fr);
@@ -203,7 +209,7 @@ public class PrincipalUI extends JFrame {
 							tc.PORTA = Integer.parseInt(linha[2]);
 
 							try {
-								c.chatEnviaMensagemIndividual(tc, msg);
+								c.chatEnviaMensagem(tc, msg);
 							} catch (IOException e1) {
 								e1.printStackTrace();
 							}							
@@ -218,8 +224,12 @@ public class PrincipalUI extends JFrame {
 
 				}else{					
 
+					
+					
 					try {
-						c.chatEnviaMensagemIndividual(buscaCliente(forWho), msg);
+						TipoCliente tc = buscaCliente(forWho);
+						PrincipalUI.areaTexto.setText(PrincipalUI.areaTexto.getText() + "Eu para "+tc.nome+": "+msg+" \n");
+						c.chatEnviaMensagem(tc, msg);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -318,6 +328,7 @@ public class PrincipalUI extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 
 		new PrincipalUI();
 	}

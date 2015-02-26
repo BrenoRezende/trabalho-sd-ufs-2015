@@ -16,6 +16,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
+import Interface.PrincipalUI;
+
 
 public class Cliente {
 
@@ -23,11 +27,14 @@ public class Cliente {
 	private String IPCliente;
 	private int PORTACliente = 6666;
 
+
+
 	public Cliente(){
 
 		new ThreadRecebeListaClientesOnline().start();
 		new ThreadRecebeMensagensChat().start();
 		new ThreadEnviaArquivos().start();
+
 
 		try {
 			//Pegando IP interno do cliente
@@ -41,6 +48,7 @@ public class Cliente {
 
 	public void conexaoServidor(int tipoConexao, String nomeCliente){
 		try{
+
 
 			this.nome = nomeCliente;
 			//Editar IP do servidor
@@ -66,7 +74,7 @@ public class Cliente {
 		}
 	}
 
-	public void chatEnviaMensagemIndividual(TipoCliente clienteChat, String msg) throws IOException{
+	public void chatEnviaMensagem(TipoCliente clienteChat, String msg) throws IOException{
 
 		try {
 
@@ -121,7 +129,9 @@ public class Cliente {
 				FileOutputStream fos = new FileOutputStream(files[i]);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-				for(int j = 0; j < fileLength; j++) bos.write(bis.read());
+				for(int j = 0; j < fileLength; j++){
+					bos.write(bis.read());
+				}
 
 				bos.close();
 			}
@@ -129,6 +139,8 @@ public class Cliente {
 			dis.close();
 
 			clientSocket.close();
+
+			JOptionPane.showMessageDialog(null, "Arquivos de "+clienteArquivo.nome+" baixados com sucesso!");
 
 		}catch(Exception ex){
 			System.out.println(ex.getMessage());
