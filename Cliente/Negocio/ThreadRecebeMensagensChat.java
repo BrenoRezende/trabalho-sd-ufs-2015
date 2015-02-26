@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import Interface.PrincipalUI;
+
 public class ThreadRecebeMensagensChat extends Thread {
 
 	@Override
@@ -33,8 +35,7 @@ public class ThreadRecebeMensagensChat extends Thread {
 				String mensagem = entrada[1];
 				
 				
-				System.out.println("Mensagem enviada por: "+nomeClienteEnviou);
-				System.out.println("Mensagem: "+mensagem);
+				PrincipalUI.areaTexto.setText(PrincipalUI.areaTexto.getText() + "Mensagem enviada por "+nomeClienteEnviou+": "+mensagem+" \n");
 
 			}
 		} catch (SocketException e) {

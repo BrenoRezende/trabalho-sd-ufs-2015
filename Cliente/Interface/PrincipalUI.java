@@ -33,11 +33,9 @@ public class PrincipalUI extends JFrame {
 
 	private JLabel lbNome, lbClientesOn;
 
-	private JTextArea taAreaMensagens;
-
 	private JComboBox comboListaClienteOn;
 
-	private JTextArea areaTexto;
+	public static JTextArea areaTexto;
 
 	private JScrollPane scroll;
 
@@ -184,38 +182,65 @@ public class PrincipalUI extends JFrame {
 
 		btEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
+				File f = new File("ClienteOnline.txt");
+				FileReader fr;
+
+				String forWho = comboListaClienteOn.getSelectedItem().toString();
 				String msg = tfTextoEnviar.getText();
 
-				if (msg.equalsIgnoreCase("Todos")) {
+				if (forWho.equalsIgnoreCase("Todos")) {
 
-				}else{
-					String cliente = comboListaClienteOn.getSelectedItem().toString();
-					
-					File f = new File("ClienteOnline.txt");
-					FileReader fr;
 					try {
 						fr = new FileReader(f);
 						BufferedReader br = new BufferedReader(fr);
 						while(br.ready()){
 							String[]linha = br.readLine().split(",");
-							if(cliente.equalsIgnoreCase(linha[0])){
+
+							TipoCliente tc = new TipoCliente();
+							tc.nome = linha[0];
+							tc.IP = linha[1];
+							tc.PORTA = Integer.parseInt(linha[2]);
+
+							try {
+								c.chatEnviaMensagemIndividual(tc, msg);
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}							
+						}
+
+
+					} catch (FileNotFoundException e2) {
+						e2.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}else{					
+
+					try {
+						fr = new FileReader(f);
+						BufferedReader br = new BufferedReader(fr);
+						while(br.ready()){
+							String[]linha = br.readLine().split(",");
+							if(forWho.equalsIgnoreCase(linha[0])){
 								TipoCliente tc = new TipoCliente();
 								tc.nome = linha[0];
 								tc.IP = linha[1];
 								tc.PORTA = Integer.parseInt(linha[2]);
-								
+
 								try {
 									c.chatEnviaMensagemIndividual(tc, msg);
 								} catch (IOException e1) {
 									e1.printStackTrace();
 								}
-								
+
 								break;
 							}
 						}
-						
-						
+
+
 					} catch (FileNotFoundException e2) {
 						e2.printStackTrace();
 					} catch (IOException e1) {
@@ -224,6 +249,12 @@ public class PrincipalUI extends JFrame {
 					}
 
 				}
+			}
+		});
+		
+		btObterArquivos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 	}
@@ -236,6 +267,7 @@ public class PrincipalUI extends JFrame {
 
 		comboBoxItems.clear();
 		comboBoxItems.add("Todos");
+
 		while(br.ready()){
 			String[]linha = br.readLine().split(",");
 			comboBoxItems.add(linha[0]);
@@ -252,7 +284,7 @@ public class PrincipalUI extends JFrame {
 				e.printStackTrace();
 			}
 		}
-		
+
 		new PrincipalUI();
 	}
 
