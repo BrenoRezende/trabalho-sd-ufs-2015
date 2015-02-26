@@ -80,7 +80,7 @@ public class Cliente {
 
 			DatagramSocket socket = new DatagramSocket();
 
-			String mensagem = this.nome +","+ msg +"\n";
+			String mensagem = this.nome +"#"+ msg +"\n";
 
 			byte [] data = mensagem.getBytes() ;
 

@@ -29,7 +29,7 @@ public class ThreadRecebeMensagensChat extends Thread {
 
 					//Recebe lista de clientes no formato "nome,ip,porta;nome,ip,porta;..."
 					String msg = new String(inBuf, 0, inPacket.getLength());
-					String [] entrada = msg.split(",");
+					String [] entrada = msg.split("#");
 
 					String nomeClienteEnviou = entrada[0];
 					String mensagem = entrada[1];
