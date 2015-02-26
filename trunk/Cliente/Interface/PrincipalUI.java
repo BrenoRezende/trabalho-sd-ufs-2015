@@ -220,45 +220,51 @@ public class PrincipalUI extends JFrame {
 				}else{					
 
 					try {
-						fr = new FileReader(f);
-						BufferedReader br = new BufferedReader(fr);
-						while(br.ready()){
-							String[]linha = br.readLine().split(",");
-							if(forWho.equalsIgnoreCase(linha[0])){
-								TipoCliente tc = new TipoCliente();
-								tc.nome = linha[0];
-								tc.IP = linha[1];
-								tc.PORTA = Integer.parseInt(linha[2]);
-
-								try {
-									c.chatEnviaMensagemIndividual(tc, msg);
-								} catch (IOException e1) {
-									e1.printStackTrace();
-								}
-
-								break;
-							}
-						}
-
-
-					} catch (FileNotFoundException e2) {
-						e2.printStackTrace();
+						c.chatEnviaMensagemIndividual(buscaCliente(forWho), msg);
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
 				}
 			}
 		});
-		
+
 		btObterArquivos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
+				String cliente = comboListaClienteOn.getSelectedItem().toString();
+				c.recebeArquivo(buscaCliente(cliente));
 			}
 		});
 	}
 
+
+	public TipoCliente buscaCliente(String nomeCliente){
+		File f = new File("ClienteOnline.txt");
+		FileReader fr;
+
+		TipoCliente tc = new TipoCliente();
+		try {
+			fr = new FileReader(f);
+			BufferedReader br = new BufferedReader(fr);
+
+			while(br.ready()){
+				String[]linha = br.readLine().split(",");
+				if(nomeCliente.equalsIgnoreCase(linha[0])){
+
+					tc.nome = linha[0];
+					tc.IP = linha[1];
+					tc.PORTA = Integer.parseInt(linha[2]);
+
+					break;
+				}
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		return tc;
+	}
 
 	public static void atualizaComboBox() throws IOException{
 		File f = new File("ClienteOnline.txt");
@@ -277,12 +283,13 @@ public class PrincipalUI extends JFrame {
 
 	public static void main(String[] args) {
 		File f = new File("ClienteOnline.txt");
-		if (!f.exists()){
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (f.exists()){
+			f.delete();
+		}
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		new PrincipalUI();
